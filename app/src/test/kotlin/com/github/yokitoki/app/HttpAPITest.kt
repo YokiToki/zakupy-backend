@@ -1,5 +1,7 @@
 package com.github.yokitoki.app
 
+import com.github.yokitoki.app.di.module
+import com.github.yokitoki.app.mock.RosterMock
 import com.github.yokitoki.app.request.LogoutRequest
 import com.github.yokitoki.app.request.SignInRequest
 import io.ktor.config.MapApplicationConfig
@@ -15,72 +17,86 @@ import io.ktor.server.testing.withApplication
 import io.ktor.util.KtorExperimentalAPI
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.junit.AfterClass
+import org.junit.BeforeClass
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 
+@KoinApiExtension
 @KtorExperimentalAPI
 class HttpAPITest {
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun start() {
+            startKoin {
+                modules(module)
+            }
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun stop() {
+            stopKoin()
+        }
+    }
+
     /**
-     * @see ZakupyRouting.signIn
+     * @see ZakupyRouting.registerAuth
      */
     @Test
     fun testSignIn() {
         withTestApplication {
-            // @TODO: Adjust path as required
             handleRequest(HttpMethod.Post, "/v1/auth/signin") {
-                // @TODO: Your body here
                 addHeader(HttpHeaders.Accept, "application/json")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 setBodyJson(SignInRequest("user@example.org", "string"))
             }.apply {
-                // @TODO: Your test here
                 assertEquals(HttpStatusCode.OK, response.status())
             }
         }
     }
 
     /**
-     * @see ZakupyRouting.logout
+     * @see ZakupyRouting.registerAuth
      */
     @Test
     fun testLogout() {
         withTestApplication {
-            // @TODO: Adjust path as required
             handleRequest(HttpMethod.Post, "/v1/auth/logout") {
-                // @TODO: Your body here
                 addHeader(HttpHeaders.Accept, "application/json")
                 addHeader(HttpHeaders.ContentType, "application/json")
                 setBodyJson(LogoutRequest("string"))
             }.apply {
-                // @TODO: Your test here
                 assertEquals(HttpStatusCode.OK, response.status())
             }
         }
     }
 
     /**
-     * @see ZakupyRouting.getV1Roster
+     * @see ZakupyRouting.registerRoster
      */
     @Test
     fun testGetV1Roster() {
         withTestApplication {
-            // @TODO: Adjust path as required
             handleRequest(HttpMethod.Get, "/v1/roster") {
+                addHeader(HttpHeaders.Accept, "application/json")
             }.apply {
-                // @TODO: Your test here
                 assertEquals(HttpStatusCode.OK, response.status())
             }
         }
     }
 
     /**
-     * @see ZakupyRouting.getV1RosterUuid
+     * @see ZakupyRouting.registerRoster
      */
     @Test
     fun testGetV1RosterUuid() {
         withTestApplication {
-            // @TODO: Adjust path as required
-            handleRequest(HttpMethod.Get, "/v1/roster/{uuid}") {
+            val uuid = RosterMock.getFirstUUid()
+            handleRequest(HttpMethod.Get, "/v1/roster/$uuid") {
             }.apply {
-                // @TODO: Your test here
                 assertEquals(HttpStatusCode.OK, response.status())
             }
         }

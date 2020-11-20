@@ -20,9 +20,11 @@ import io.ktor.locations.Locations
 import io.ktor.response.respond
 import io.ktor.routing.get
 import io.ktor.routing.routing
+import org.koin.core.component.KoinApiExtension
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
+@KoinApiExtension
 @Suppress("unused") // Referenced in application.conf
 fun Application.module() {
     install(Locations) {

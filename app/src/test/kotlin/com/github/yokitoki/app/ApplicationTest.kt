@@ -6,8 +6,10 @@ import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.withTestApplication
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.koin.core.component.KoinApiExtension
 
 class ApplicationTest {
+    @KoinApiExtension
     @Test
     fun testRoot() {
         withTestApplication({ module() }) {

@@ -18,6 +18,12 @@ dependencies {
     implementation("io.ktor:ktor-auth:${rootProject.extra["ktor.server.version"]}")
     implementation("io.ktor:ktor-auth-jwt:${rootProject.extra["ktor.server.version"]}")
     implementation("io.ktor:ktor-jackson:${rootProject.extra["ktor.server.version"]}")
+    implementation("org.koin:koin-core:${rootProject.extra["koin.version"]}")
+    implementation("org.koin:koin-core-ext:${rootProject.extra["koin.version"]}")
+    implementation("org.koin:koin-ktor:${rootProject.extra["koin.version"]}")
+    implementation("com.icerockdev.service:email-service:${rootProject.extra["icerockdev.email-service.version"]}")
+    implementation("com.icerockdev.service:fcm-push-service:${rootProject.extra["icerockdev.fcm-push-service.version"]}")
+    testImplementation("org.koin:koin-test:${rootProject.extra["koin.version"]}")
     testImplementation("io.ktor:ktor-server-tests:${rootProject.extra["ktor.server.version"]}")
 }
 

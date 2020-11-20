@@ -1,50 +1,31 @@
 package com.github.yokitoki.app
 
-import com.github.yokitoki.app.request.LogoutRequest
-import com.github.yokitoki.app.request.SignInRequest
-import com.github.yokitoki.app.response.AuthCredentialsResponse
-import com.github.yokitoki.app.response.Response
-import com.github.yokitoki.app.response.RosterListResponse
-import com.github.yokitoki.app.response.RosterResponse
+import com.github.yokitoki.app.controller.AuthController
+import com.github.yokitoki.app.controller.RosterController
 import io.ktor.application.call
-import io.ktor.auth.authenticate
-import io.ktor.http.HttpStatusCode
-import io.ktor.request.receive
 import io.ktor.response.respond
 import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.post
+import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 /**
  * Zakupy
  */
-class ZakupyRouting {
+@KoinApiExtension
+class ZakupyRouting : KoinComponent {
     /**
      * Auth
      */
     fun Routing.registerAuth() {
         post("/v1/auth/signin") {
-            val body = call.receive<SignInRequest>()
-
-            if (false) httpException(HttpStatusCode.BadRequest)
-            if (false) httpException(HttpStatusCode.InternalServerError)
-
-            call.respond(AuthCredentialsResponse())
+            call.respond(get<AuthController>().signIn(call))
         }
 
         post("/v1/auth/logout") {
-            val body = call.receive<LogoutRequest>()
-
-            if (false) httpException(HttpStatusCode.BadRequest)
-
-            call.respond(
-                Response(
-                    status = 0,
-                    message = "message",
-                    timestamp = 0,
-                    success = false
-                )
-            )
+            call.respond(get<AuthController>().logout(call))
         }
     }
 
@@ -52,23 +33,12 @@ class ZakupyRouting {
      * Roster
      */
     fun Routing.registerRoster() {
-//        authenticate("bearerAuth") {
-            get("/v1/roster") {
-                if (false) httpException(HttpStatusCode.InternalServerError)
+        get("/v1/roster") {
+            call.respond(get<RosterController>().getAll())
+        }
 
-                call.respond(RosterListResponse())
-            }
-//        }
-
-//        authenticate("bearerAuth") {
-            get("/v1/roster/{uuid}") {
-                val uuid = call.getPath<String>("uuid")
-
-                if (false) httpException(HttpStatusCode.NotFound)
-                if (false) httpException(HttpStatusCode.InternalServerError)
-
-                call.respond(RosterResponse())
-//            }
+        get("/v1/roster/{uuid}") {
+            call.respond(get<RosterController>().get(call))
         }
     }
 }
