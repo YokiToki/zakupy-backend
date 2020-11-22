@@ -1,0 +1,43 @@
+name: Heroku deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build
+        run: ./gradlew build
+      - name: Get app version
+        run: |
+          ./gradlew appVersion -q
+          echo "APP_VERSION=$(./gradlew appVersion -q)" >> $GITHUB_ENV
+      - name: Deploy
+        uses: akhileshns/heroku-deploy@v3.6.8
+        with:
+          heroku_app_name: zakupyapp
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          healthcheck: "https://zakupyapp.herokuapp.com/health"
+          checkstring: "ok"
+          rollbackonhealthcheckfailed: true
+          usedocker: true
+          docker_build_args: |
+            JAR_FILE
+            POSTGRES_HOST
+            POSTGRES_DB
+            POSTGRES_USER
+            POSTGRES_PASSWORD
+        env:
+          JAR_FILE: app-$APP_VERSION.jar
+          POSTGRES_HOST: ${{secrets.POSTGRES_HOST}}
+          POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+          POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}

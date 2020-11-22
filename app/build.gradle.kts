@@ -32,8 +32,18 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+tasks {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = JavaVersion.VERSION_11.toString()
+        }
+    }
+    jar {
+        destinationDirectory.set(File("${project.rootDir}/build"))
+        manifest {
+            attributes["Main-Class"] = "com.github.yokitoki.app.Main"
+            attributes["Class-Path"] = configurations.runtimeClasspath.get().files.joinToString { "libs/${it.name}" }
+        }
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
     }
 }

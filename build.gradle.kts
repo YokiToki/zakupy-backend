@@ -31,3 +31,7 @@ allprojects {
 task<Delete>("clean") {
     delete(project.buildDir)
 }
+
+task("appVersion") {
+    println(project.extra["app.version"])
+}

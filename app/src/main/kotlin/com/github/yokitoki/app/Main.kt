@@ -19,6 +19,7 @@ object Main {
         System.setProperty("user.timezone", "UTC")
         dotenv {
             systemProperties = true
+            ignoreIfMissing = true
         }
 
         startKoin {
